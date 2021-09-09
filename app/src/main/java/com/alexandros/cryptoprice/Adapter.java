@@ -6,16 +6,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alexandros.cryptoprice.response.Crypto;
+
+import com.alexandros.cryptoprice.api.response_model.CryptoData;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
-    List<Crypto> cryptoList;
+    List<CryptoData> cryptoList;
 
 
 
@@ -25,12 +27,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         private final ImageView cryptoLogo;
 
 
-
-
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
             nameTextView = (TextView) view.findViewById(R.id.nameTextView);
             priceTextView = (TextView) view.findViewById(R.id.priceTextView);
             cryptoLogo = (ImageView) view.findViewById(R.id.imageView);
@@ -40,18 +38,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         public TextView getNameTextView() {
             return nameTextView;
         }
-
         public TextView getPriceTextView() {
             return priceTextView;
         }
-
         public ImageView getCryptoLogo() {
             return cryptoLogo;
         }
     }
 
 
-    public Adapter(List<Crypto> cryptoList) {
+    public Adapter(MainActivity mainActivity, List<CryptoData> cryptoList) {
         this.cryptoList = cryptoList;
     }
 
@@ -66,9 +62,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull Adapter.ViewHolder holder, int position) {
 
-        holder.getNameTextView().setText(cryptoList.get(position).getCoinInfo().getName().toString());
-        holder.getPriceTextView().setText(cryptoList.get(position).getAggregatedData().getPrice().toString());
-        Picasso.get().load(cryptoList.get(position).getCoinInfo().getImageUrl()).into(holder.cryptoLogo);
+
+        holder.getNameTextView().setText(cryptoList.get(position).getName());
+        holder.getPriceTextView().setText(cryptoList.get(position).getCurrentPrice().toString());
+        Picasso.get().load(cryptoList.get(position).getImage()).into(holder.getCryptoLogo());
 
     }
 
