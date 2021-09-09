@@ -21,7 +21,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<CryptoData> cryptoList;
-    //CompositeDisposable disposable = new CompositeDisposable();
     private static final String TAG = "MainActivity";
 
     @Override
@@ -30,13 +29,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         cryptoList = new ArrayList<>();
         recyclerView = findViewById(R.id.crypto_list);
-        loadCryptos("usd","market_cap_desc", 20, 1);
-        //getCrypto();
+        loadCryptos("usd", "market_cap_desc", 20, 1);
+
 
     }
-
-
-
 
 
     public void loadCryptos(String fiat, String order, Integer per_page, Integer page) {
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
                 assert response.body() != null;
                 cryptoList = response.body();
-                Log.i(TAG, "onResponse: "+ cryptoList.size());
+                Log.i(TAG, "onResponse: " + cryptoList.size());
                 PutDataIntoRecyclerView(cryptoList);
 
 
@@ -59,42 +55,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<CryptoData>> call, Throwable t) {
-                Log.e(TAG, "onFailure: ",t );
+                Log.e(TAG, "onFailure: ", t);
             }
         });
-       // return RetrofitInstance.getRetrofitInstance().getApiService().getCoinInfo(limit, usd, apiKey);
 
 
     }
 
 
-
-    /*
-    private void getCrypto(){
-        disposable.add(loadCryptos(10,"usd",API_KEY).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(new DisposableSingleObserver<Response<JSONresponse>>() {
-            @Override
-            public void onSuccess(@NotNull Response<JSONresponse> jsoNresponse) {
-                if (jsoNresponse.isSuccessful() && jsoNresponse.body()!= null){
-                    List<Datum> tempList = jsoNresponse.body().getData();
-                    for (Datum datum :tempList){
-                        Log.i(TAG, "onSuccess: "+datum.getCoinInfo().getFullName());
-                    }
-
-                }
-            }
-
-            @Override
-            public void onError(@NotNull Throwable e) {
-                Log.i(TAG, "onError: "+e.getMessage());
-            }
-        }));
-    }
-
-     */
-
-    private void PutDataIntoRecyclerView(List<CryptoData> cryptoList){
+    private void PutDataIntoRecyclerView(List<CryptoData> cryptoList) {
         Adapter adapter = new Adapter(this, cryptoList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);

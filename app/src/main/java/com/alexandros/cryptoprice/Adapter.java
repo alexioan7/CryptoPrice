@@ -20,7 +20,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     List<CryptoData> cryptoList;
 
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
         private final TextView priceTextView;
@@ -38,9 +37,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         public TextView getNameTextView() {
             return nameTextView;
         }
+
         public TextView getPriceTextView() {
             return priceTextView;
         }
+
         public ImageView getCryptoLogo() {
             return cryptoLogo;
         }
