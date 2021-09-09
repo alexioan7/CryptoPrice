@@ -3,6 +3,7 @@ package com.alexandros.cryptoprice;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<CryptoData> cryptoList;
     private static final String TAG = "MainActivity";
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +31,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         cryptoList = new ArrayList<>();
         recyclerView = findViewById(R.id.crypto_list);
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
         loadCryptos("usd", "market_cap_desc", 20, 1);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadCryptos("usd", "market_cap_desc", 20, 1);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
 
     }
