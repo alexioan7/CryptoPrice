@@ -1,43 +1,40 @@
 package com.alexandros.cryptoprice;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import android.os.Bundle;
-import android.util.Log;
 
 
-import com.alexandros.cryptoprice.api.RetrofitInstance;
 import com.alexandros.cryptoprice.api.response_model.CryptoData;
+import com.alexandros.cryptoprice.repositories.CryptoRepository;
+import com.alexandros.cryptoprice.viewmodels.CryptoListViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private CryptoListViewModel cryptoListViewModel;
     RecyclerView recyclerView;
-    List<CryptoData> cryptoList;
-    private static final String TAG = "MainActivity";
     SwipeRefreshLayout swipeRefreshLayout;
+    CryptoRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cryptoList = new ArrayList<>();
+        cryptoListViewModel = new ViewModelProvider(this).get(CryptoListViewModel.class);
         recyclerView = findViewById(R.id.crypto_list);
         swipeRefreshLayout = findViewById(R.id.swiperefresh);
-        loadCryptos("usd", "market_cap_desc", 20, 1);
-
+        ObserveAnyChange();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadCryptos("usd", "market_cap_desc", 20, 1);
+                ObserveAnyChange();
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -46,35 +43,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void loadCryptos(String fiat, String order, Integer per_page, Integer page) {
-        Call<List<CryptoData>> call = RetrofitInstance.getRetrofitInstance().getApiService().getCoinInfo("usd", "market_cap_desc", 20, 1);
-        call.enqueue(new Callback<List<CryptoData>>() {
+    public void ObserveAnyChange(){
+        cryptoListViewModel.getCryptos().observe(this, new Observer<List<CryptoData>>() {
             @Override
-            public void onResponse(Call<List<CryptoData>> call, Response<List<CryptoData>> response) {
-                if (!response.isSuccessful()) {
-                    Log.e("Code:", String.valueOf(response.code()));
-                    return;
-                }
-
-                assert response.body() != null;
-                cryptoList = response.body();
-                Log.i(TAG, "onResponse: " + cryptoList.size());
-                PutDataIntoRecyclerView(cryptoList);
-
-
-            }
-
-            @Override
-            public void onFailure(Call<List<CryptoData>> call, Throwable t) {
-                Log.e(TAG, "onFailure: ", t);
+            public void onChanged(List<CryptoData> cryptoData) {
+                PutDataIntoRecyclerView(cryptoData);
             }
         });
-
-
     }
 
 
-    private void PutDataIntoRecyclerView(List<CryptoData> cryptoList) {
+    public void PutDataIntoRecyclerView(List<CryptoData> cryptoList) {
         Adapter adapter = new Adapter(this, cryptoList);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
